@@ -26,7 +26,7 @@ DEBUG = False
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['pedagogico.semedcanaadoscarajas.pa.gov.br', 'www.pedagogico.semedcanaadoscarajas.pa.gov.br']
+ALLOWED_HOSTS = ['pedagogico.semedcanaadoscarajas.pa.gov.br', 'www.pedagogico.semedcanaadoscarajas.pa.gov.br', '18.230.62.167', '18.230.62.167:8000']
 
 #ALLOWED_HOSTS = ['54.233.92.107', '15.228.59.223', 'localhost', '127.0.0.1']
 
