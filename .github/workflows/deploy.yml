@@ -1,0 +1,41 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main  # Ou a branch que você deseja monitorar
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Passo 2: Configurar o SSH
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.5
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Passo 3: Copiar arquivos (opcional, se necessário)
+      # Se você precisa copiar arquivos específicos para o servidor, use SCP
+      # - name: Copy files via SCP
+      #   run: |
+      #     scp -o StrictHostKeyChecking=no -r ./path/to/files ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/caminho/no/servidor
+
+      # Passo 4: Executar comandos no servidor
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /home/ubuntu/meu-site
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            sudo systemctl restart gunicorn
+            sudo systemctl restart nginx
+          EOF
