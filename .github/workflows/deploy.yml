@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main  # Ou a branch que você deseja monitorar
+      - main  # Altere se você usa outra branch
 
 jobs:
   deploy:
@@ -20,13 +20,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Passo 3: Copiar arquivos (opcional, se necessário)
-      # Se você precisa copiar arquivos específicos para o servidor, use SCP
-      # - name: Copy files via SCP
-      #   run: |
-      #     scp -o StrictHostKeyChecking=no -r ./path/to/files ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/caminho/no/servidor
-
-      # Passo 4: Executar comandos no servidor
+      # Passo 3: Executar comandos no servidor
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
