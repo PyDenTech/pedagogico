@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main  # Altere se você usa outra branch
+      - main  # Altere para a branch que você deseja monitorar
 
 jobs:
   deploy:
@@ -14,9 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Passo 2: Configurar o SSH
+      # Passo 2: Configurar o SSH usando a versão correta da ação
       - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.9.0  # Use a versão correta
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -25,11 +25,18 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             cd /home/ubuntu/meu-site
+            echo "=== Iniciando Pull ==="
             git pull origin main
+            echo "=== Ativando Ambiente Virtual ==="
             source venv/bin/activate
+            echo "=== Instalando Dependências ==="
             pip install -r requirements.txt
+            echo "=== Aplicando Migrações ==="
             python manage.py migrate
+            echo "=== Coletando Arquivos Estáticos ==="
             python manage.py collectstatic --noinput
+            echo "=== Reiniciando Serviços ==="
             sudo systemctl restart gunicorn
             sudo systemctl restart nginx
+            echo "=== Deploy Completo ==="
           EOF
